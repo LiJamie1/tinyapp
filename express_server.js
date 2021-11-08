@@ -14,14 +14,14 @@ app.get("/", (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const templateVars = {urls: urlDatabase}
-  res.render('urls_index', templateVars)
+  const templateVars = {urls: urlDatabase};
+  res.render('urls_index', templateVars);
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const shortenedURL = req.params.shortURL
-  const templateVars = {shortURL: shortenedURL, longURL: urlDatabase[shortenedURL]}
-  res.render('urls_show', templateVars)
+  const shortenedURL = req.params.shortURL;
+  const templateVars = {shortURL: shortenedURL, longURL: urlDatabase[shortenedURL]};
+  res.render('urls_show', templateVars);
 });
 
 app.listen(PORT, () => {
