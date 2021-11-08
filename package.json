@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/QuiteAverage/tinyapp/issues"
   },
-  "homepage": "https://github.com/QuiteAverage/tinyapp#readme"
+  "homepage": "https://github.com/QuiteAverage/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
