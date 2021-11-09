@@ -25,22 +25,27 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const longURL = req.body.longURL;
   res.render("urls_new");
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL
+  res.redirect(`urls/${shortURL}`)
 });
 
-
 app.get('/urls/:shortURL', (req, res) => {
-  const shortenedURL = req.params.shortURL;
-  const templateVars = {shortURL: shortenedURL, longURL: urlDatabase[shortenedURL]};
+  const shortURL = req.params.shortURL;
+  const templateVars = {shortURL: shortURL, longURL: urlDatabase[shortURL]};
   res.render('urls_show', templateVars);
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL
+  const longURL = urlDatabase[shortURL]
+  res.redirect(longURL);
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
