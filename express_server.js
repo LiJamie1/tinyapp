@@ -55,6 +55,13 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars)
 });
 
+app.get('/login', (req, res) => {
+  const templateVars = {
+    user_id: req.cookies.user_id,
+  };
+  res.render('urls_login', templateVars)
+})
+
 app.get('/urls/new', (req, res) => {
   const templateVars = {
     user_id: req.cookies.user_id,
@@ -78,11 +85,22 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
+app.get("/register", (req, res) => {
+  // const templateVars = {
+  //   templateVars = {
+  //     user_id: req.cookies.user_id,
+  //   }
+  // }
+  res.redirect("/register")
+});
+
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL
   const longURL = urlDatabase[shortURL]
   res.redirect(longURL);
 });
+
+
 
 //post
 

@@ -12,17 +12,17 @@
     </div>
     <div>
       <%if (!user_id) { %>
-        <form action="/login" method="POST">
-          <button type="button" class="btn btn-dark btn-sm float-right">Login</button>
-        </form>
-        <form action="/register" method="POST">
-          <button type="button" class="btn btn-dark btn-sm float-right">Register</button>
-        </form>
+        <div id="navbarAddition">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/login">Login</a>
+            <a class="nav-item nav-link" href="/register">Register</a>
+          </div>
       <% } %>
       <%if (user_id) { %>
-        <form action="/logout" method="POST">
-          <h5><%= email %></h5>
-          <button type="submit" class="btn btn-dark">Logout</button>
+        
+        <form action="/logout" method="POST"> 
+          <p style="margin-right: 20px">Logged in as: <%= email %></p>
+          <button type="submit" class="btn btn-dark btn-sm float-right">Logout</button>
         </form>
       <% } %>
     </div>
