@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const cookie = require('cookie-parser');
+// const cookie = require('cookie-session');
 const PORT = 8080;
 const app = express();
 
@@ -22,21 +23,6 @@ const findUserByEmail = (email) => {
     }
   }
   return null;
-};
-
-const authenticateUser = (email, password) => {
-  const currentUser = findUserByEmail(email);
-
-  if (!currentUser) {
-    //email doesnt exist
-    return {error: "Email does not exist", data: null};
-  }
-  if (currentUser.password !== password) {
-    //password or email does not match
-    return {error: "Password is incorrect", data: null};
-  }
-  
-  return {data: currentUser, error: null};
 };
 
 const userUrls = (id, urlDatabase) => {
@@ -156,15 +142,24 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/login", (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
-  const {error, data} = authenticateUser(userEmail, userPassword);
-
-  if (error) {
-    console.log(error);
-    return res.status(400).send("email or password is incorrect");
+  
+  if(!userEmail || !userPassword) {
+    return res.status(400).send('Email or Password is missing');
   }
 
-  res.cookie("user_id", data.id);
-  res.redirect("/urls");
+  const user = findUserByEmail(userEmail);
+
+  if(!user) {
+    return res.status(400).send('Email does not exist');
+  }
+
+  bcrypt.compare(userPassword, user.password, (err, success) => {
+    if(!success) {
+      return res.status(400).send('Password is incorrect');
+    }
+    res.cookie("user_id", user.id);
+    res.redirect("/urls");
+  });
 });
 
 app.post("/urls", (req, res) => {
