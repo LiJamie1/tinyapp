@@ -60,7 +60,11 @@ const users = {
 // gets
 
 app.get("/", (req, res) => {
-  res.redirect("/urls")
+  const user = req.cookies.user_id
+  if (user) {
+    res.redirect("/urls")
+  }
+  res.redirect("/login")
 });
 
 app.get('/urls', (req, res) => {
