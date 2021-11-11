@@ -1,8 +1,10 @@
 const express = require("express");
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
 const cookie = require('cookie-parser');
 const PORT = 8080;
 const app = express();
+
 app.use(cookie());
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
@@ -12,7 +14,7 @@ const generateRandomString = function() {
   return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
 };
 
-const findUser = (email) => {
+const findUserByEmail = (email) => {
   for (const user in users) {
     const currUser = users[user];
     if (currUser.email === email) {
@@ -182,7 +184,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
   }
-  res.status(403).send("You do not have access to delete or edit this link");
+
+  return res.status(403).send("You do not have access to delete or edit this link");
 });
 
 app.post("/urls/:shortURL", (req, res) => {
@@ -195,8 +198,8 @@ app.post("/urls/:shortURL", (req, res) => {
     res.redirect("/urls");
   }
 
-  res.status(403).send("You do not have access to delete or edit this link");
-  res.redirect("/urls");
+  return res.status(403).send("You do not have access to delete or edit this link");
+  // res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
@@ -210,10 +213,10 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
 
   if (email === '' || password === '') {
-    res.status(400).send('Email or Password is missing');
+    return res.status(400).send('Email or Password is missing');
   }
   if (findUser(email)) {
-    res.status(409).send('Email already in use');
+    return res.status(409).send('Email already in use');
   }
 
   users[id] = {
