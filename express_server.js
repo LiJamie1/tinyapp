@@ -25,7 +25,7 @@ const findUserByEmail = (email) => {
 };
 
 const authenticateUser = (email, password) => {
-  const currentUser = findUser(email);
+  const currentUser = findUserByEmail(email);
 
   if (!currentUser) {
     //email doesnt exist
@@ -208,26 +208,32 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const id = generateRandomString();
   const password = req.body.password;
   const email = req.body.email;
 
-  if (email === '' || password === '') {
+  if (!email || !password) {
     return res.status(400).send('Email or Password is missing');
   }
-  if (findUser(email)) {
+  
+  if (findUserByEmail(email)) {
     return res.status(409).send('Email already in use');
   }
 
-  users[id] = {
-    id,
-    email,
-    password
-  };
-  
-  res.cookie('user_id', id);
-  
-  res.redirect("/urls");
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(password, salt, (err, hash) => {
+      const id = generateRandomString();
+
+      users[id] = {
+        id,
+        email,
+        password: hash
+      };
+
+      res.cookie('user_id', id);
+
+      res.redirect("/urls");
+    });
+  });
 });
 
 //listening
