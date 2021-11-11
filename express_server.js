@@ -172,6 +172,9 @@ app.post("/register", (req, res) => {
   if ( email === '' || password === '') {
     res.status(400).send('Email or Password is missing')
   }
+  if (findUser(email)) {
+    res.status(409).send('Email already in use')
+  }
 
   users[id] = {
     id,
