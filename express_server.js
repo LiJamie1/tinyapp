@@ -12,6 +12,32 @@ const generateRandomString = function() {
   return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
 }
 
+const findUser = (email) => {
+  for (const user in users) {
+    const currUser = users[user]
+    if (currUser.email === email) {
+      console.log("currUser", currUser)
+      return currUser
+    }
+  }
+  return null
+}
+
+const authenticateUser = (email, password) => {
+  const currentUser = findUser(email);
+
+  if (!currentUser) {
+    //email doesnt exist
+    return {error: "Email does not exist", data: null}
+  }
+  if (currentUser.password !== password) {
+    //password or email does not match
+    return {error: "Password is incorrect", data: null}
+  }
+  
+  return {data: currentUser, error: null}
+}
+
 // objects
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -46,7 +72,6 @@ app.get('/urls', (req, res) => {
 
   if (req.cookies.user_id) {
     const user = users[req.cookies.user_id]
-    // console.log('req.cookies', req.cookies)
     templateVars.user_id = user.id
     templateVars.email = user.email
     res.render('urls_index', templateVars);
@@ -86,11 +111,6 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  // const templateVars = {
-  //   templateVars = {
-  //     user_id: req.cookies.user_id,
-  //   }
-  // }
   res.redirect("/register")
 });
 
@@ -105,8 +125,17 @@ app.get("/u/:shortURL", (req, res) => {
 //post
 
 app.post("/login", (req, res) => {
-  const user = users[req.body.username]
-  res.cookie('user_id', user.id)
+  const userEmail = req.body.email
+  const userPassword = req.body.password
+  console.log(userEmail, userPassword)
+  const {error, data} = authenticateUser(userEmail, userPassword);
+  console.log("existing",data)
+  if (error) {
+    console.log(error)
+    return res.status(400).send("email or password is incorrect")
+  }
+
+  res.cookie("user_id", data.id)
   res.redirect("/urls")
 });
 
@@ -151,7 +180,7 @@ app.post("/register", (req, res) => {
   };
   
   res.cookie('user_id', id)
-  
+  console.log(users[id])
   res.redirect("/urls")
 });
 
