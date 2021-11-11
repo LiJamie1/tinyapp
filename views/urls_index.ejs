@@ -10,6 +10,9 @@
 
 <body>
   <%- include('partials/_header') %>
+  <% if (!user_id) { %>
+    <h1 class="text-center">To see or create shortened urls please log in.</h1>
+      <% } %>
   <main style="margin: 1em;">
     <h3>My URLs</h3>
     <table class="table">

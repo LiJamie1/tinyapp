@@ -79,6 +79,7 @@ app.get("/", (req, res) => {
   if (user) {
     res.redirect("/urls");
   }
+
   res.redirect("/login");
 });
 
