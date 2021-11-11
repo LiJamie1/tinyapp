@@ -174,15 +174,28 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
+  const userId = req.cookies.user_id;
   const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect("/urls");
+  const userUrlList = userUrls(userId, urlDatabase);
+
+  if (userUrlList[shortURL]) {
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  }
+  res.status(403).send("You do not have access to delete or edit this link");
 });
 
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const newLongURL = req.body.longURL;
-  urlDatabase[shortURL] = newLongURL;
+  const userId = req.cookies.user_id;
+  const userUrlList = userUrls(userId, urlDatabase);
+  if (userUrlList[shortURL]) {
+    urlDatabase[shortURL] = newLongURL;
+    res.redirect("/urls");
+  }
+
+  res.status(403).send("You do not have access to delete or edit this link");
   res.redirect("/urls");
 });
 
