@@ -1,3 +1,4 @@
+const { use } = require('chai');
 const chai = require('chai');
 const assert = chai.assert;
 const {generateRandomString, findUserByEmail, userUrls} = require('../helpers');
@@ -58,3 +59,24 @@ describe('#findUserByEmail', function() {
     assert.deepEqual(result, null);
   });
 });
+
+describe('#userUrls', function() {
+  it('should return an object of urls that a user has access to', function() {
+    const userID = 'userRandomID'
+    const urlDatabase = {
+      "b2xVn2": {
+        longURL: "http://www.lighthouselabs.ca",
+        userID: "userRandomID"},
+      "9sm5xK": {
+        longURL: "http://www.google.com",
+        userID: "userRandomID2"}
+    };
+    const expected = {
+      "b2xVn2": {
+        longURL: "http://www.lighthouselabs.ca",
+        userID: "userRandomID"},
+    }
+    const result = userUrls(userID, urlDatabase);
+    assert.deepEqual(result, expected)
+  })
+})

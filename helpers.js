@@ -30,4 +30,4 @@ module.exports = {
   generateRandomString,
   findUserByEmail,
   userUrls
-}
+};
