@@ -27,11 +27,11 @@ const userUrls = (id, database) => {
 };
 
 const urlExists = (shortUrl, database) => {
-  if(database[shortUrl]) {
-    return true
+  if (database[shortUrl]) {
+    return true;
   }
-  return null
-}
+  return null;
+};
 
 module.exports = {
   generateRandomString,

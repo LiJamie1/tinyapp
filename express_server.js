@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
-const {generateRandomString, findUserByEmail, userUrls, urlExists} = require('./helpers')
+const {generateRandomString, findUserByEmail, userUrls, urlExists} = require('./helpers');
 const cookie = require('cookie-session');
 const PORT = 8080;
 const app = express();
@@ -43,8 +43,7 @@ app.get("/", (req, res) => {
   const user = req.session.userId;
   
   if (user) {
-    res.redirect("/urls");
-    return
+    return res.redirect("/urls");
   }
 
   res.redirect("/login");
@@ -64,8 +63,7 @@ app.get('/urls', (req, res) => {
       templateVars.user_id = user.id;
       templateVars.email = user.email;
       templateVars.urls = userUrlList;
-      res.render('urls_index', templateVars);
-      return
+      return res.render('urls_index', templateVars);
     }
   }
 
@@ -73,8 +71,7 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const user_id = req.session.userId
-  
+  const user_id = req.session.userId;
   res.render('urls_login', {user_id});
 });
 
@@ -104,18 +101,18 @@ app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const user = req.session.userId;
 
-  if(!user) {
-    return res.status(400).send("You are not logged in, sign in <a href='/login'>here</a>")
+  if (!user) {
+    return res.status(400).send("You are not logged in, sign in <a href='/login'>here</a>");
   }
 
   if (!urlExists(shortURL, urlDatabase)) {
-    return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>")
+    return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>");
   }
 
-  const userUrlList = userUrls(user, urlDatabase); 
+  const userUrlList = userUrls(user, urlDatabase);
 
   if (!userUrlList[shortURL]) {
-    return res.status(400).send("You do not own this url, make a short url <a href='/urls/new'>here</a>")
+    return res.status(400).send("You do not own this url, make a short url <a href='/urls/new'>here</a>");
   }
 
   const templateVars = {
@@ -136,7 +133,7 @@ app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
 
   if (!urlExists(shortURL, urlDatabase)) {
-    return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>")
+    return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>");
   }
   
   const longURL = urlDatabase[shortURL].longURL;
@@ -149,17 +146,17 @@ app.post("/login", (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
   
-  if(!userEmail || !userPassword) {
-    return res.status(400).send('Email or Password is missing. If you do not have an account register <a href="/register">here</a>')
+  if (!userEmail || !userPassword) {
+    return res.status(400).send('Email or Password is missing. If you do not have an account register <a href="/register">here</a>');
   }
 
   const user = findUserByEmail(userEmail, users);
-  if(!user) {
-    return res.status(400).send('Email does not exist, please register for an account <a href="/register">here</a>')
+  if (!user) {
+    return res.status(400).send('Email does not exist, please register for an account <a href="/register">here</a>');
   }
 
   bcrypt.compare(userPassword, user.password, (err, success) => {
-    if(!success) {
+    if (!success) {
       return res.status(400).send('Email or Password is incorrect');
     }
     req.session.userId = user.id;
@@ -186,7 +183,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     return res.redirect("/urls");
   }
 
-  res.status(403).send("You do not have access to delete or edit this link")
+  res.status(403).send("You do not have access to delete or edit this link");
 });
 
 app.post("/urls/:shortURL", (req, res) => {
@@ -204,7 +201,7 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  req.session = null
+  req.session = null;
   res.redirect("/login");
 });
 
@@ -217,7 +214,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send('Email or Password is missing');
   }
   
-  const user = findUserByEmail(email, users)
+  const user = findUserByEmail(email, users);
   if (user) {
     return res.status(400).send('Email already in use');
   }
