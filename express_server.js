@@ -101,7 +101,6 @@ app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
 
   if (!urlExists(shortURL, urlDatabase)) {
-    console.log('in urlExists', urlExists)
     return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>")
   }
   
@@ -113,7 +112,6 @@ app.get('/urls/:shortURL', (req, res) => {
   };
   
   res.render('urls_show', templateVars);
-  
 });
 
 app.get("/register", (req, res) => {
