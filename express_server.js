@@ -128,8 +128,7 @@ app.post("/login", (req, res) => {
     return res.status(400).send('Email or Password is missing. If you do not have an account register <a href="/register">here</a>')
   }
 
-  const user = findUserByEmail(userEmail);
-
+  const user = findUserByEmail(userEmail, users);
   if(!user) {
     return res.status(400).send('Email does not exist, please register for an account <a href="/register">here</a>')
   }
