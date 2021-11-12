@@ -39,8 +39,8 @@ describe('#findUserByEmail', function() {
     const result = findUserByEmail(targetUserEmail, users);
     assert.deepEqual(result, targetUser);
   });
-  
-  it('should return an object containing information on the current user', function() {
+
+  it('should return null if the user does not exist', function() {
     const targetUserEmail = 'j@j.ca';
     const users = {
       user1: {
