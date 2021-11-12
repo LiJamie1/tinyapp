@@ -103,6 +103,12 @@ app.get('/urls/:shortURL', (req, res) => {
   if (!urlExists(shortURL, urlDatabase)) {
     return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>")
   }
+
+  const user = req.session.userId
+
+  if(!user) {
+    return res.status(400).send("You are not logged in, sign in <a href='/login'>here</a>")
+  }
   
   const templateVars = {
     user_id: req.session.userId,
