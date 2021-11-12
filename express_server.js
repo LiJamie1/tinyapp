@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const {generateRandomString, findUserByEmail, userUrls, urlExists} = require('./helpers');
-const {urlDatabase, userDatabase} = require('./database')
+const {urlDatabase, userDatabase} = require('./database');
 const cookie = require('cookie-session');
 const PORT = 8080;
 const app = express();
@@ -34,7 +34,7 @@ app.get('/urls', (req, res) => {
     urls: null
   };
   
-  const user = req.session.userId
+  const user = req.session.userId;
   
   if (user) {
     const currUser = userDatabase[user];
@@ -104,10 +104,10 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const user = req.session.userId
+  const user = req.session.userId;
 
   if (user) {
-    return res.redirect("/urls")
+    return res.redirect("/urls");
   }
 
   res.redirect("/register");
