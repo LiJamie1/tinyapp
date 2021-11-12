@@ -10,10 +10,11 @@
 
 <body>
   <%- include('partials/_header') %>
-  <% if (!user_id) { %>
-    <h1 class="text-center">To see or create shortened urls please log in.</h1>
-      <% } %>
+  
   <main style="margin: 1em;">
+    <% if (!user_id) { %>
+      <h1 class="text-center">To see or create shortened urls please log in</h1>
+        <% } else { %>
     <h3>My URLs</h3>
     <table class="table">
       <thead>
@@ -24,6 +25,7 @@
           <th scope="col">Delete</th>
         </tr>
       </thead>
+      <% } %>
       <tbody>
         <% for(let url in urls) { %>
           <tr>
