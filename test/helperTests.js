@@ -1,4 +1,3 @@
-const { use } = require('chai');
 const chai = require('chai');
 const assert = chai.assert;
 const {generateRandomString, findUserByEmail, userUrls} = require('../helpers');
