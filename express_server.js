@@ -18,7 +18,7 @@ const generateRandomString = function() {
   return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
 };
 
-const findUserByEmail = (email) => {
+const findUserByEmail = (email, users) => {
   for (const user in users) {
     const currUser = users[user];
     if (currUser.email === email) {
@@ -218,7 +218,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send('Email or Password is missing');
   }
   
-  const user = findUserByEmail(email)
+  const user = findUserByEmail(email, users)
   if (user) {
     return res.status(400).send('Email already in use');
   }
