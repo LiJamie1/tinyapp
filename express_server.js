@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
-const {generateRandomString, findUserByEmail, userUrls} = require('./helpers')
+const {generateRandomString, findUserByEmail, userUrls, urlExists} = require('./helpers')
 const cookie = require('cookie-session');
 const PORT = 8080;
 const app = express();
@@ -99,13 +99,21 @@ app.get("/register", (req, res) => {
 
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
+
+  if (!urlExists(shortURL, urlDatabase)) {
+    console.log('in urlExists', urlExists)
+    return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>")
+  }
+  
   const templateVars = {
     user_id: req.session.userId,
     email: users[req.session.userId].email,
     shortURL: shortURL,
     longURL: urlDatabase[shortURL].longURL
   };
+  
   res.render('urls_show', templateVars);
+  
 });
 
 app.get("/register", (req, res) => {

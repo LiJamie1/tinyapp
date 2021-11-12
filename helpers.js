@@ -27,10 +27,8 @@ const userUrls = (id, database) => {
 };
 
 const urlExists = (shortUrl, database) => {
-  for (const url in database) {
-    if (database[url].longURL) {
-      return true
-    }
+  if(database[shortUrl]) {
+    return true
   }
   return null
 }
