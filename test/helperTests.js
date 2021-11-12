@@ -1,6 +1,6 @@
 const chai = require('chai');
 const assert = chai.assert;
-const {generateRandomString, findUserByEmail, userUrls} = require('../helpers');
+const {generateRandomString, findUserByEmail, userUrls, urlExists} = require('../helpers');
 
 
 describe('#generateRandomString', function() {
@@ -92,5 +92,35 @@ describe('#userUrls', function() {
     const expected = {}
     const result = userUrls(userID, urlDatabase);
     assert.deepEqual(result, expected)
+  });
+});
+
+describe('#urlExists', function() {
+  it('if a url exists it returns true', function() {
+    const urlDatabase = {
+      "b2xVn2": {
+        longURL: "http://www.lighthouselabs.ca",
+        userID: "userRandomID"},
+      "9sm5xK": {
+        longURL: "http://www.google.com",
+        userID: "userRandomID2"}
+    };
+    const targetURL = 'b2xVn2'
+    result = urlExists(targetURL, urlDatabase)
+    assert.isTrue(result)
+  });
+
+  it('if a url does not exist it returns null', function () {
+    const urlDatabase = {
+      "b2xVn2": {
+        longURL: "http://www.lighthouselabs.ca",
+        userID: "userRandomID"},
+      "9sm5xK": {
+        longURL: "http://www.google.com",
+        userID: "userRandomID2"}
+    };
+    const targetURL = 'b2xVn3'
+    result = urlExists(targetURL, urlDatabase)
+    assert.strictEqual(result, null)
   });
 });
