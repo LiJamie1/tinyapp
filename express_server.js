@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const {generateRandomString, findUserByEmail, userUrls, urlExists} = require('./helpers');
+const {urlDatabase, userDatabase} = require('./database')
 const cookie = require('cookie-session');
 const PORT = 8080;
 const app = express();
@@ -12,29 +13,6 @@ app.use(cookie({
   name: 'session',
   keys: ['key1', 'key2']
 }));
-
-// objects
-const urlDatabase = {
-  "b2xVn2": {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "userRandomID"},
-  "9sm5xK": {
-    longURL: "http://www.google.com",
-    userID: "userRandomID"}
-};
-
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "123"
-  },
-  "userRandomID2": {
-    id: "userRandomID2",
-    email: "user2@example.com",
-    password: "qwe"
-  }
-};
 
 // gets
 
@@ -56,15 +34,15 @@ app.get('/urls', (req, res) => {
     urls: null
   };
   
-  if (req.session.userId) {
-    const user = users[req.session.userId];
-    if (user) {
-      const userUrlList = userUrls(user.id, urlDatabase);
-      templateVars.user_id = user.id;
-      templateVars.email = user.email;
-      templateVars.urls = userUrlList;
-      return res.render('urls_index', templateVars);
-    }
+  const user = req.session.userId
+  
+  if (user) {
+    const currUser = userDatabase[user];
+    const userUrlList = userUrls(currUser.id, urlDatabase);
+    templateVars.user_id = currUser.id;
+    templateVars.email = currUser.email;
+    templateVars.urls = userUrlList;
+    return res.render('urls_index', templateVars);
   }
 
   res.render('urls_index', templateVars);
@@ -82,7 +60,7 @@ app.get('/urls/new', (req, res) => {
   }
   const templateVars = {
     user_id: user,
-    email: users[user].email
+    email: userDatabase[user].email
   };
   res.render("urls_new", templateVars);
 });
@@ -117,7 +95,7 @@ app.get('/urls/:shortURL', (req, res) => {
 
   const templateVars = {
     user_id: user,
-    email: users[user].email,
+    email: userDatabase[user].email,
     shortURL: shortURL,
     longURL: urlDatabase[shortURL].longURL
   };
@@ -126,6 +104,12 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+  const user = req.session.userId
+
+  if (user) {
+    return res.redirect("/urls")
+  }
+
   res.redirect("/register");
 });
 
@@ -150,7 +134,8 @@ app.post("/login", (req, res) => {
     return res.status(400).send('Email or Password is missing. If you do not have an account register <a href="/register">here</a>');
   }
 
-  const user = findUserByEmail(userEmail, users);
+  const user = findUserByEmail(userEmail, userDatabase);
+
   if (!user) {
     return res.status(400).send('Email does not exist, please register for an account <a href="/register">here</a>');
   }
@@ -214,7 +199,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send('Email or Password is missing');
   }
   
-  const user = findUserByEmail(email, users);
+  const user = findUserByEmail(email, userDatabase);
   if (user) {
     return res.status(400).send('Email already in use');
   }
@@ -223,7 +208,7 @@ app.post("/register", (req, res) => {
     bcrypt.hash(password, salt, (err, hash) => {
       const id = generateRandomString();
 
-      users[id] = {
+      userDatabase[id] = {
         id,
         email,
         password: hash
