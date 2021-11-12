@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
-// const cookie = require('cookie-parser');
+const {generateRandomString, findUserByEmail, userUrls} = require('./helpers')
 const cookie = require('cookie-session');
 const PORT = 8080;
 const app = express();
@@ -12,31 +12,6 @@ app.use(cookie({
   name: 'session',
   keys: ['key1', 'key2']
 }));
-
-//helper functions
-const generateRandomString = function() {
-  return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
-};
-
-const findUserByEmail = (email, users) => {
-  for (const user in users) {
-    const currUser = users[user];
-    if (currUser.email === email) {
-      return currUser;
-    }
-  }
-  return null;
-};
-
-const userUrls = (id) => {
-  let urls = {};
-  for (const url in urlDatabase) {
-    if (urlDatabase[url].userID === id) {
-      urls[url] = urlDatabase[url];
-    }
-  }
-  return urls;
-};
 
 // objects
 const urlDatabase = {
@@ -85,7 +60,7 @@ app.get('/urls', (req, res) => {
   if (req.session.userId) {
     const user = users[req.session.userId];
     if (user) {
-      const userUrlList = userUrls(user.id);
+      const userUrlList = userUrls(user.id, urlDatabase);
       templateVars.user_id = user.id;
       templateVars.email = user.email;
       templateVars.urls = userUrlList;
