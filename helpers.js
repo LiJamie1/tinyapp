@@ -26,8 +26,18 @@ const userUrls = (id, database) => {
   return urls;
 };
 
+const urlExists = (shortUrl, database) => {
+  for (const url in database) {
+    if (database[url].longURL) {
+      return true
+    }
+  }
+  return null
+}
+
 module.exports = {
   generateRandomString,
   findUserByEmail,
-  userUrls
+  userUrls,
+  urlExists
 };
