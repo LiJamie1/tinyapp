@@ -9,9 +9,10 @@ describe('#generateRandomString', function() {
     const randomStringTwo = generateRandomString();
     assert.notEqual(randomStringOne, randomStringTwo);
   });
+
   it('should return a 6 character string when called', function () {
     const randomStringLength = generateRandomString().length;
-    assert.strictEqual(randomStringLength, 6);
+    assert.deepEqual(randomStringLength, 6);
   });
 });
 
@@ -37,5 +38,23 @@ describe('#findUserByEmail', function() {
     };
     const result = findUserByEmail(targetUserEmail, users);
     assert.deepEqual(result, targetUser);
+  });
+  
+  it('should return an object containing information on the current user', function() {
+    const targetUserEmail = 'j@j.ca';
+    const users = {
+      user1: {
+        id: 1111,
+        email: 'j@k.ca',
+        password: 123
+      },
+      user2: {
+        id: 2222,
+        email: 'k@k.ca',
+        password: 234
+      }
+    };
+    const result = findUserByEmail(targetUserEmail, users);
+    assert.deepEqual(result, null);
   });
 });
