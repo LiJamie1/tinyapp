@@ -91,10 +91,13 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = {
-    user_id: req.session.userId,
-  };
-  res.render('urls_register', templateVars);
+  const user = req.session.userId;
+
+  if (user) {
+    return res.redirect("/urls");
+  }
+
+  res.render('urls_register', {user_id: user});
 });
 
 app.get('/urls/:shortURL', (req, res) => {
@@ -108,7 +111,7 @@ app.get('/urls/:shortURL', (req, res) => {
   if (!urlExists(shortURL, urlDatabase)) {
     return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>")
   }
-  
+
   const userUrlList = userUrls(user, urlDatabase); 
 
   if (!userUrlList[shortURL]) {
@@ -116,8 +119,8 @@ app.get('/urls/:shortURL', (req, res) => {
   }
 
   const templateVars = {
-    user_id: req.session.userId,
-    email: users[req.session.userId].email,
+    user_id: user,
+    email: users[user].email,
     shortURL: shortURL,
     longURL: urlDatabase[shortURL].longURL
   };
@@ -131,6 +134,11 @@ app.get("/register", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
+
+  if (!urlExists(shortURL, urlDatabase)) {
+    return res.status(400).send("Url does not exist, make a short url <a href='/urls/new'>here</a>")
+  }
+  
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
