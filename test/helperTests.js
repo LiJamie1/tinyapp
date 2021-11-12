@@ -78,5 +78,20 @@ describe('#userUrls', function() {
     }
     const result = userUrls(userID, urlDatabase);
     assert.deepEqual(result, expected)
-  })
-})
+  });
+
+  it('should return an empty object if no userID match', function() {
+    const userID = '11111'
+    const urlDatabase = {
+      "b2xVn2": {
+        longURL: "http://www.lighthouselabs.ca",
+        userID: "userRandomID"},
+      "9sm5xK": {
+        longURL: "http://www.google.com",
+        userID: "userRandomID2"}
+    };
+    const expected = {}
+    const result = userUrls(userID, urlDatabase);
+    assert.deepEqual(result, expected)
+  });
+});
